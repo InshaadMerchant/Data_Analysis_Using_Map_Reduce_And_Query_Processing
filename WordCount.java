@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
@@ -21,16 +23,84 @@ public class WordCount {
     private final static IntWritable one = new IntWritable(1);
     private Text word = new Text();
 
-    public void map(Object key, Text value, Context context
-                    ) throws IOException, InterruptedException {
-FileSplit fileSplit = (FileSplit)context.getInputSplit();
-String filename = fileSplit.getPath().getName();
+    public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+// FileSplit fileSplit = (FileSplit)context.getInputSplit();
+// String filename = fileSplit.getPath().getName();
+      String line = value.toString();
+      String[] fields = line.split(";");
 
-      StringTokenizer itr = new StringTokenizer(value.toString());
-      while (itr.hasMoreTokens()) {
-        word.set(itr.nextToken());
-        context.write(word, one);
+      if (fields.length != 6) { //titleid, titletype, title, year, rating, genre(s)
+        return;
       }
+
+      String titleType = fields[1];
+      String titleYear = fields[3];
+      String titleRating = fields[4];
+      String[] titleGenre = fields[5].split(",");
+
+      // ignore all titles that are not 'movie'
+      if (!titleType.equals("movie")) {
+        return;
+      }
+
+      int year = 0;
+      try { year = Integer.parseInt(titleYear); 
+      } catch (NumberFormatException e) {
+        return;
+      }
+
+      String yearRange = null;
+
+      if (year >= 1991 && year <= 2000) {
+        yearRange = "[1991-2000]";
+      }
+      else if (year >= 2001 && year <= 2010) {
+        yearRange = "[2001-2010]";
+      }
+      else if (year >= 2011 && year <= 2020) {
+        yearRange = "[2011-2020]";
+      }
+      else {
+        return; //ignore all other years
+      }
+
+      double rating = 0.0;
+
+      try { rating = Double.parseDouble(titleRating); 
+      } catch (NumberFormatException e) {
+        return;
+      }
+      
+      if (rating < 7.0)
+      { return; }
+
+      List<String> genres = new ArrayList<>();
+
+      for (String genre : titleGenre) {
+        genres.add(genre);
+      }
+
+      String[][] genrePairs = {
+        {"Action","Thriller"},
+        {"Adventure", "Drama"},
+        {"Comedy", "Romance"}
+      };
+
+      for (String[] pair : genrePairs) {
+        if (genres.contains(pair[0]) && genres.contains(pair[1])) {
+          String writeKey = String.format("%s,%s,%s", yearRange, pair[0], pair[1]);
+          word.set(writeKey);
+          context.write(word, one);
+        }
+      }
+
+      
+
+      // StringTokenizer itr = new StringTokenizer(value.toString());
+      // while (itr.hasMoreTokens()) {
+      //   word.set(itr.nextToken());
+      //   context.write(word, one);
+      // }
     }
   }
 
