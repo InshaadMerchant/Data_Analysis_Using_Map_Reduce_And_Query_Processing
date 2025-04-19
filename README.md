@@ -131,5 +131,3 @@ python3 visualize.py
 - Araohat Kokate
 - Aindrila Bhattacharya
 
-## License
-This project is part of the academic coursework for [Course Number] at [University Name].
