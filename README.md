@@ -29,9 +29,9 @@ The MapReduce program analyzes the distribution of movies across different genre
 - Comedy & Romance
 
 ### Requirements
-- Hadoop 3.x
-- Java 8 or higher
-- Python 3.x (for visualizations)
+- Hadoop 3.3.2
+- JDK 11
+- Python 3.11.5 (for visualizations)
 - matplotlib (Python library)
 
 ### Running the MapReduce Job
