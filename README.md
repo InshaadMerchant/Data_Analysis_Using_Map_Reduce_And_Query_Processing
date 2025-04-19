@@ -127,8 +127,9 @@ python3 visualize.py
    - Lead actor/actress correlation with ratings
 
 ## Contributors
-- [Your Name]
-- [Team Member Names if applicable]
+- Inshaad Merchant
+- Araohat Kokate
+- Aindrila Bhattacharya
 
 ## License
 This project is part of the academic coursework for [Course Number] at [University Name].
