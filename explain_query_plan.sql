@@ -1,5 +1,6 @@
 -- Generate execution plan for the Comedy-Romance movies query
-EXPLAIN PLAN FOR
+EXPLAIN PLAN 
+SET statement_id = 'ex_plan1' FOR
 WITH ComedyRomanceMovies AS (
     SELECT tb.tconst, 
            tb.primarytitle,
@@ -31,4 +32,4 @@ ORDER BY averagerating DESC
 FETCH FIRST 5 ROWS ONLY;
 
 -- Display the execution plan
-SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY); 
+SELECT PLAN_TABLE_OUTPUT FROM TABLE(DBMS_XPLAN.DISPLAY(NULL, 'ex_plan1', 'BASIC'));
